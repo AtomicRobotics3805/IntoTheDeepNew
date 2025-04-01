@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.subsystems.servos
 
+import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.Servo
 import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.ftc.OpModeData
 import com.rowanmcalpin.nextftc.ftc.hardware.ServoToPosition
 
-object Pivot: Subsystem() {
+@Config
+object Pivot : Subsystem() {
 
     // region Variables
 
@@ -22,9 +24,10 @@ object Pivot: Subsystem() {
     // region Poses
 
     @JvmField
-    var transferPos = 0.6
+    var transferPos = 0.7
+
     @JvmField
-    var intakePos = 0.9
+    var intakePos = 0.85
 
     // endregion
 
@@ -41,6 +44,6 @@ object Pivot: Subsystem() {
     // endregion
 
     override fun initialize() {
-        servo = OpModeData.hardwareMap.get(Servo::class.java, name)
+        servo = OpModeData.hardwareMap!!.get(Servo::class.java, name)
     }
 }

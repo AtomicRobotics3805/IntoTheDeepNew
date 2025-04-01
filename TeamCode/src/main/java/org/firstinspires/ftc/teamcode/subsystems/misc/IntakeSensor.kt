@@ -6,8 +6,9 @@ import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.ftc.OpModeData
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import java.util.Timer
 
-object IntakeSensor: Subsystem() {
+object IntakeSensor : Subsystem() {
 
     // region Variables
 
@@ -29,6 +30,8 @@ object IntakeSensor: Subsystem() {
 
     private var hsv: FloatArray = FloatArray(3)
 
+    var timer = com.pedropathing.util.Timer()
+
     // endregion
 
     // endregion
@@ -36,11 +39,16 @@ object IntakeSensor: Subsystem() {
     // region Commands
 
     class WaitUntilSample: Command() {
+
+        override fun start() {
+            timer.resetTimer()
+        }
+
         override val isDone: Boolean
-            get() = sensor.getDistance(DistanceUnit.CM) < distanceThreshold
+            get() = (sensor.getDistance(DistanceUnit.CM) < distanceThreshold || timer.elapsedTimeSeconds > 3)
     }
 
-    class detect: Command() {
+    class detect : Command() {
         override val isDone = false
 
         override fun update() {
@@ -59,7 +67,7 @@ object IntakeSensor: Subsystem() {
     // endregion
 
     override fun initialize() {
-        sensor = OpModeData.hardwareMap.get(RevColorSensorV3::class.java, sensorName)
+        sensor = OpModeData.hardwareMap!!.get(RevColorSensorV3::class.java, sensorName)
         sensor.enableLed(true)
     }
 }

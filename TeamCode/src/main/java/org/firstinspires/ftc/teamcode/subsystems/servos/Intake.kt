@@ -6,7 +6,7 @@ import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.ftc.OpModeData
 import com.rowanmcalpin.nextftc.ftc.hardware.MultipleServosToPosition
 
-object Intake: Subsystem() {
+object Intake : Subsystem() {
 
     // region Variables
 
@@ -17,6 +17,7 @@ object Intake: Subsystem() {
 
     @JvmField
     var leftName = "intake_left"
+
     @JvmField
     var rightName = "intake_right"
 
@@ -41,8 +42,8 @@ object Intake: Subsystem() {
     // endregion
 
     override fun initialize() {
-        leftServo = OpModeData.hardwareMap.get(Servo::class.java, leftName)
-        rightServo = OpModeData.hardwareMap.get(Servo::class.java, rightName)
+        leftServo = OpModeData.hardwareMap!!.get(Servo::class.java, leftName)
+        rightServo = OpModeData.hardwareMap!!.get(Servo::class.java, rightName)
         rightServo.direction = Servo.Direction.REVERSE
     }
 }

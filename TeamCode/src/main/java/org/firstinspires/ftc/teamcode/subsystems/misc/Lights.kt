@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems.misc
 
 import android.graphics.Color
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.ftc.OpModeData
 import org.firstinspires.ftc.teamcode.other.DotStarBridgedLED
 
-object Lights: Subsystem() {
+object Lights : Subsystem() {
 
     // region Variables
 
@@ -20,7 +19,7 @@ object Lights: Subsystem() {
 
     // region Commands
 
-    class display: Command() {
+    class display : Command() {
         override val isDone = false
 
         override fun update() {
@@ -44,10 +43,10 @@ object Lights: Subsystem() {
     // endregion
 
     override fun initialize() {
+        ledsLeft = OpModeData.hardwareMap!!.get(DotStarBridgedLED::class.java, "led_left")
+        ledsRight = OpModeData.hardwareMap!!.get(DotStarBridgedLED::class.java, "led_right")
         ledsLeft.setController(DotStarBridgedLED.Controller.RevExpansionHub)
         ledsRight.setController(DotStarBridgedLED.Controller.RevExpansionHub)
-        ledsLeft = OpModeData.hardwareMap.get(DotStarBridgedLED::class.java, "left_leds")
-        ledsRight = OpModeData.hardwareMap.get(DotStarBridgedLED::class.java, "right_leds")
 
         ledsLeft.length = 14
         ledsRight.length = 14
@@ -61,6 +60,7 @@ object Lights: Subsystem() {
             ledsLeft.update()
         }
 
+        ledsLeft.initialize()
         ledsLeft.maxOutputAmps = 0.8
         ledsRight.maxOutputAmps = 0.8
     }

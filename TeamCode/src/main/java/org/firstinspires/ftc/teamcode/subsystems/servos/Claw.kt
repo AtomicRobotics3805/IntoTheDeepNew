@@ -5,8 +5,9 @@ import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.ftc.OpModeData
 import com.rowanmcalpin.nextftc.ftc.hardware.ServoToPosition
+import org.firstinspires.ftc.teamcode.subsystems.motors.Lift
 
-object Claw: Subsystem() {
+object Claw : Subsystem() {
 
     // region Variables
 
@@ -22,9 +23,11 @@ object Claw: Subsystem() {
     // region Poses
 
     @JvmField
-    var openPos = 0.15
+    var openPos = 0.2
+
     @JvmField
     var closedPos = 0.35
+
     @JvmField
     var specimenOpenPos = 0.08
 
@@ -42,10 +45,9 @@ object Claw: Subsystem() {
 
     val specimenOpen: Command
         get() = ServoToPosition(servo, specimenOpenPos, this)
-
     // endregion
 
     override fun initialize() {
-        servo = OpModeData.hardwareMap.get(Servo::class.java, name)
+        servo = OpModeData.hardwareMap!!.get(Servo::class.java, name)
     }
 }
