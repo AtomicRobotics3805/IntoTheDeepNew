@@ -1,22 +1,28 @@
 package org.firstinspires.ftc.teamcode.auto
 
+import com.pedropathing.follower.Follower
 import com.pedropathing.localization.Pose
+import com.pedropathing.localization.PoseUpdater
 import com.pedropathing.pathgen.BezierCurve
 import com.pedropathing.pathgen.BezierLine
 import com.pedropathing.pathgen.PathBuilder
 import com.pedropathing.pathgen.PathChain
 import com.pedropathing.pathgen.Point
+import com.qualcomm.robotcore.hardware.HardwareMap
+import com.rowanmcalpin.nextftc.core.units.rad
+import com.rowanmcalpin.nextftc.ftc.OpModeData
 
 
 object TrajectoryFactory {
 
     // region Poses
 
+
     // region Sample
 
     val sampleStartPos = Point(9.0, 105.0)
 
-    val sampleScorePose = Point(18.0,126.0)
+    val sampleScorePose = Point(18.0, 126.0)
 
     val firstSamplePos = Point(30.0, 121.0)
 
@@ -125,7 +131,6 @@ object TrajectoryFactory {
     // endregion
 
     // endregion
-
 
 
 }

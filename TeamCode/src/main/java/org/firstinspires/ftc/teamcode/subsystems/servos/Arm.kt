@@ -6,7 +6,7 @@ import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.ftc.OpModeData
 import com.rowanmcalpin.nextftc.ftc.hardware.ServoToPosition
 
-object Arm: Subsystem() {
+object Arm : Subsystem() {
 
     // region Variables
 
@@ -23,8 +23,10 @@ object Arm: Subsystem() {
 
     @JvmField
     var upPos = 0.7
+
     @JvmField
     var downPos = 0.05
+
     @JvmField
     var specimenPose = 0.97
 
@@ -46,6 +48,6 @@ object Arm: Subsystem() {
     // endregion
 
     override fun initialize() {
-        servo = OpModeData.hardwareMap.get(Servo::class.java, name)
+        servo = OpModeData.hardwareMap!!.get(Servo::class.java, name)
     }
 }

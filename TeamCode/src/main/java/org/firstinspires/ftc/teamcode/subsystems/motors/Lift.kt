@@ -1,15 +1,20 @@
 package org.firstinspires.ftc.teamcode.subsystems.motors
 
+import com.acmerobotics.dashboard.config.Config
 import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
-import com.rowanmcalpin.nextftc.core.control.controllers.PIDFController
-import com.rowanmcalpin.nextftc.ftc.hardware.controllables.HoldPosition
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.ResetEncoder
-import com.rowanmcalpin.nextftc.ftc.hardware.controllables.RunToPosition
+import com.rowanmcalpin.nextftc.hardware.RunToPosition
+import dev.nextftc.nextcontrol.ControlSystem
+import dev.nextftc.nextcontrol.KineticState
+import dev.nextftc.nextcontrol.feedback.PIDCoefficients
+import dev.nextftc.nextcontrol.feedforward.GravityFeedforwardParameters
+import dev.nextftc.nextcontrol.interpolators.FirstOrderEMAParameters
 
-object Lift: Subsystem() {
+@Config
+object Lift : Subsystem() {
 
     // region Variables
 
@@ -22,6 +27,7 @@ object Lift: Subsystem() {
 
     @JvmField
     var rightMotorName = "lift"
+
     @JvmField
     var leftMotorName = "lift2"
 
@@ -30,21 +36,19 @@ object Lift: Subsystem() {
     // region PID
 
     @JvmField
-    var kP = 0.005 // TODO: Tune
+    var setPointTolerance = 30.0
 
     @JvmField
-    var kI = 0.005 // TODO: Tune
+    var coefficients = PIDCoefficients(0.0028, 0.0, 0.00008)
 
     @JvmField
-    var kD = 0.005 // TODO: Tune
+    var ffParameters = GravityFeedforwardParameters(0.17)
 
     @JvmField
-    var kF = 0.13 // TODO: Tune
+    var interpParameters = FirstOrderEMAParameters(0.1)
 
-    @JvmField
-    var setPointTolerance = 10.0 // TODO: Tune
-
-    var controller = PIDFController(kP, kI, kD, { kF }, setPointTolerance)
+    val controller = ControlSystem().posPid(coefficients).elevatorFF(ffParameters)
+        .emaInterpolator(interpParameters).build()
 
     // endregion
 
@@ -52,20 +56,27 @@ object Lift: Subsystem() {
 
     @JvmField
     var autoTransferPos = 100.0
+
     @JvmField
     var intakePos = 85.0
+
     @JvmField
-    var specimenPickupPos = 180.0
+    var specimenPickupPos = 200.0
+
     @JvmField
     var highPos = 3700.0
+
     @JvmField
-    var slightlyHighPos = 400.0
+    var slightlyHighPos = 310.0
+
     @JvmField
-    var specimenScorePos = 680.0
+    var specimenScorePos = 800.0
+
     @JvmField
     var specimenAutonomousScorePos = 277.0
+
     @JvmField
-    var hangPos = 2000.0
+    var hangPos = 2010.0
 
     // endregion
 
@@ -73,43 +84,43 @@ object Lift: Subsystem() {
 
     // region Commands
 
-    override val defaultCommand: Command
-        get() = HoldPosition(motorGroup, controller, this)
-
     val resetEncoders: Command
         get() = ResetEncoder(motorGroup.leader, this)
 
     val toIntake: Command
-        get() = RunToPosition(motorGroup, intakePos, controller, this)
+        get() = RunToPosition(controller, intakePos, setPointTolerance, this)
 
     val toSpecimenPickup: Command
-        get() = RunToPosition(motorGroup, specimenPickupPos, controller, this)
+        get() = RunToPosition(controller, specimenPickupPos, setPointTolerance, this)
 
     val toHigh: Command
-        get() = RunToPosition(motorGroup, highPos, controller, this)
+        get() = RunToPosition(controller, highPos, setPointTolerance, this)
 
     val toSlightlyHigh: Command
-        get() = RunToPosition(motorGroup, slightlyHighPos, controller, this)
+        get() = RunToPosition(controller, slightlyHighPos, setPointTolerance, this)
 
     val toSpecimenScore: Command
-        get() = RunToPosition(motorGroup, specimenScorePos, controller, this)
+        get() = RunToPosition(controller, specimenScorePos, setPointTolerance, this)
 
     val toAutonomousSpecScore: Command
-        get() = RunToPosition(motorGroup, specimenAutonomousScorePos, controller, this)
+        get() = RunToPosition(controller, specimenAutonomousScorePos, setPointTolerance, this)
 
     val toHang: Command
-        get() = RunToPosition(motorGroup, hangPos, controller, this)
+        get() = RunToPosition(controller, hangPos, setPointTolerance, this)
 
     val toAutoTransferPos: Command
-        get() = RunToPosition(motorGroup, autoTransferPos, controller, this)
+        get() = RunToPosition(controller, autoTransferPos, setPointTolerance, this)
 
     val zero: Command
-        get() = RunToPosition(motorGroup, 0.0, controller, this)
+        get() = RunToPosition(controller, 0.0, setPointTolerance, this)
+
+    val hang: Command
+        get() = RunToPosition(controller, slightlyHighPos, setPointTolerance, this)
 
     // endregion
 
     override fun periodic() {
-        controller = PIDFController(kP, kI, kD, { kF }, setPointTolerance) // Update PID
+        motorGroup.power = controller.calculate(KineticState(motorGroup.currentPosition, motorGroup.velocity))
     }
 
     override fun initialize() {

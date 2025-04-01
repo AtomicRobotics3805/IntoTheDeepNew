@@ -1,16 +1,20 @@
 package org.firstinspires.ftc.teamcode.subsystems.motors
 
+import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
-import com.rowanmcalpin.nextftc.core.control.controllers.PIDFController
-import com.rowanmcalpin.nextftc.ftc.hardware.controllables.HoldPosition
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
-import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.ResetEncoder
-import com.rowanmcalpin.nextftc.ftc.hardware.controllables.RunToPosition
+import dev.nextftc.nextcontrol.ControlSystem
+import com.rowanmcalpin.nextftc.hardware.RunToPosition
+import dev.nextftc.nextcontrol.KineticState
+import dev.nextftc.nextcontrol.feedback.PIDCoefficients
+import dev.nextftc.nextcontrol.feedforward.GravityFeedforwardParameters
+import dev.nextftc.nextcontrol.interpolators.FirstOrderEMAParameters
 
-object Extension: Subsystem() {
+@Config
+object Extension : Subsystem() {
 
     // region Variables
 
@@ -18,7 +22,6 @@ object Extension: Subsystem() {
 
     lateinit var motor: MotorEx
 
-    lateinit var motorGroup: MotorGroup
 
     @JvmField
     var motorName = "intake_extension"
@@ -28,36 +31,40 @@ object Extension: Subsystem() {
     // region PID
 
     @JvmField
-    var kP = 0.005 // TODO: Tune
+    var setPointTolerance = 30.0
 
     @JvmField
-    var kI = 0.005 // TODO: Tune
+    var coefficients = PIDCoefficients(0.003, 0.0, 0.0)
 
     @JvmField
-    var kD = 0.005 // TODO: Tune
+    var ffParameters = GravityFeedforwardParameters(0.15)
+
 
     @JvmField
-    var kF = 0.13 // TODO: Tune
+    var interpParameters = FirstOrderEMAParameters(0.1)
 
-    @JvmField
-    var setPointTolerance = 10.0 // TODO: Tune
-
-    var controller = PIDFController(kP, kI, kD, { kF }, setPointTolerance)
+    val controller = ControlSystem().posPid(coefficients).emaInterpolator(interpParameters)
+        .elevatorFF(ffParameters).build()
 
     // endregion
 
     // region Poses
 
     @JvmField
-    var transferPos = 100.0
+    var transferPos = 150.0
+
     @JvmField
     var autoTransferPos = 70.0
+
     @JvmField
     var outPos = 900.0
+
     @JvmField
     var slightlyOutPos = 700.0
+
     @JvmField
     var middlePos = 600.0
+
     @JvmField
     var autoOutPos = 600.0
 
@@ -67,42 +74,38 @@ object Extension: Subsystem() {
 
     // region Commands
 
-    override val defaultCommand: Command
-        get() = HoldPosition(motorGroup, controller, this)
-
     val resetEncoders: Command
-        get() = ResetEncoder(motorGroup.leader, this)
+        get() = ResetEncoder(motor, this)
 
     val toTransfer: Command
-        get() = RunToPosition(motor, transferPos, controller, this)
+        get() = RunToPosition(controller, transferPos, setPointTolerance, this)
 
     val toOut: Command
-        get() = RunToPosition(motor, outPos, controller, this)
+        get() = RunToPosition(controller, outPos, setPointTolerance, this)
 
     val toSlightlyOut: Command
-        get() = RunToPosition(motor, slightlyOutPos, controller, this)
+        get() = RunToPosition(controller, slightlyOutPos, setPointTolerance, this)
 
     val toMiddlePos: Command
-        get() = RunToPosition(motor, middlePos, controller, this)
+        get() = RunToPosition(controller, middlePos, setPointTolerance, this)
 
     val toIntakeAuto: Command
-        get() = RunToPosition(motor, autoOutPos, controller, this)
+        get() = RunToPosition(controller, autoOutPos, setPointTolerance, this)
 
     val toAutoTransfer: Command
-        get() = RunToPosition(motor, autoTransferPos, controller, this)
+        get() = RunToPosition(controller, autoTransferPos, setPointTolerance, this)
 
     val toFullIn: Command
-        get() = RunToPosition(motor, 0.0, controller, this)
+        get() = RunToPosition(controller, 0.0, setPointTolerance, this)
 
     // endregion
 
     override fun periodic() {
-        controller = PIDFController(kP, kI, kD, { kF }, setPointTolerance) // Update PID
+        motor.power = controller.calculate(KineticState(motor.currentPosition, motor.velocity))
     }
 
     override fun initialize() {
         motor = MotorEx(motorName)
         motor.direction = DcMotorSimple.Direction.REVERSE
-        controller.setPointTolerance = 10.0
     }
 }

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.other;
 
 import android.graphics.Color;
-//import android.support.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
@@ -15,17 +14,17 @@ import java.util.Arrays;
 
 /**
  * Represents a DotStar LED strip when plugged in via an I2C/SPI bridge.
- *
+ * <p>
  * DotStar LEDs (i.e. https://www.adafruit.com/product/2238) are collections of LEDs which are
  * programmable using SPI. While it is possible to use two digital outputs as data and clock lines,
  * an I2C/SPI Bridge can manage the digital writes at a much higher frequency. This is required for
  * "smooth" color changes. However, a similar class for driving the LEDs via two digital outputs
  * is also available.
- *
+ * <p>
  * Output intensity is artificially limited by the theoretical maximum allowed by the digital IO
  * controller {@link DotStarBridgedLED#setMaxOutputAmps(double)}. Be aware that exceeding the
  * allowed current can damage your devices. It is your responsibility to ensure this doesn't happen.
- *
+ * <p>
  * If using the REV Robotics Expansion Hub to run the I2C/SPI bridge, please ensure you have
  * firmware version 1.7.2 or greater. Otherwise, the heavy I2C write load may cause crashes. Also,
  * do not use I2C bus/port 0, as the operation of the bridge will interfere with the internal IMU.
@@ -44,16 +43,16 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
 
     /**
      * Array representing the individual pixel groups in the LED strip.
-     *
+     * <p>
      * Sizing can be set using {@link Parameters#length} during initialization.
-     * */
+     */
     public DotStarBridgedLED.Pixel[] pixels;
 
     /**
      * Array representing the individual pixel groups in the LED strip as set.
-     *
+     * <p>
      * Sizing can be set using {@link Parameters#length} during initialization.
-     * */
+     */
     private DotStarBridgedLED.Pixel[] setPixels;
 
 
@@ -107,7 +106,9 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
     // Public API
     //----------------------------------------------------------------------------------------------
 
-    /** Reset each pixel in the strip to "off". */
+    /**
+     * Reset each pixel in the strip to "off".
+     */
     public void clear() {
         for (DotStarBridgedLED.Pixel pixel : pixels) {
             pixel.reset();
@@ -131,7 +132,6 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
      *
      * @param index Index of the pixel to set
      * @param color Color value (android.graphics.Color)
-     *
      * @see android.graphics.Color
      */
     public void setPixel(int index, int color) {
@@ -162,12 +162,10 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
 
         if (oldLength == length) {
             return;
-        }
-        else if (oldLength > length) {
+        } else if (oldLength > length) {
             this.pixels = Arrays.copyOfRange(this.pixels, 0, length);
             this.setPixels = Arrays.copyOfRange(this.setPixels, 0, length);
-        }
-        else {
+        } else {
             this.pixels = Arrays.copyOf(this.pixels, length);
             this.setPixels = Arrays.copyOf(this.setPixels, length);
 
@@ -180,7 +178,7 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
 
     /**
      * Set the type of controller used to drive the LED strip.
-     *
+     * <p>
      * This will set the i2cMaxBuffer and maxOutputAmps settings to appropriate values for the
      * given controller. These values can also be set manually.
      *
@@ -229,8 +227,7 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
     public void setMaxOutputAmps(double amps) {
         if (amps < 0.02) {
             throw new IllegalArgumentException("A minimum of 0.02 amps are required to run LEDs");
-        }
-        else if (amps > 10.0) {
+        } else if (amps > 10.0) {
             throw new IllegalArgumentException("An excessively high maximum amperage is dangerous");
         }
 
@@ -239,13 +236,13 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
 
     /**
      * Flush the current array of pixels to the device.
-     *
+     * <p>
      * We attempt to perform this update in a careful manner. Total brightness of the pixels will
      * be reduced (possibly reducing color quality) if the projected current drawn by the pixels
      * exceeds the maxOutputAmps setting.
      *
      * @see DotStarBridgedLED#setMaxOutputAmps(double)
-     * */
+     */
     public void update() {
         boolean updatePixels = false;
         // Number of bytes necessary to write out the pixels, including header and end frames.
@@ -265,7 +262,7 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
 
         // Iterate the pixels to learn the total current drawn and collect the colors in order.
         for (int i = 0; i < pixels.length; i++) {
-            if(!pixels[i].equals(setPixels[i])) {
+            if (!pixels[i].equals(setPixels[i])) {
                 setPixels[i].copy(pixels[i]);
                 updatePixels = true;
             }
@@ -280,7 +277,7 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
 
         // Only perform the write if one or more pixels changed.  Otherwise
         // the pixels should already by set properly.
-        if(updatePixels) {
+        if (updatePixels) {
             // Ensure the total current will not exceed our theoretical maximum.
             if (current > parameters.maxOutputAmps) {
                 double scale = parameters.maxOutputAmps / current;
@@ -330,7 +327,7 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
 
     /**
      * Writes out the given buffer to the LEDs via the I2C/SPI bridge.
-     *
+     * <p>
      * This method will attempt to write the given data in the most efficient way possible based on
      * on the parameters.i2cMaxBuffer. In the worst case, bytes will be written one at a time. The
      * destination register is determined by parameters.writeRegister. Atomic write waiting is used
@@ -398,25 +395,39 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
         // State
         //------------------------------------------------------------------------------------------
 
-        /** The write address of the I2C/SPI bridge. (Default: 0x50) */
+        /**
+         * The write address of the I2C/SPI bridge. (Default: 0x50)
+         */
         public I2cAddr i2cAddr = I2cAddr.create8bit(0x50);
 
-        /** Maximum size of the I2C buffer as determined by the hardware. (Default: 27 bytes) */
+        /**
+         * Maximum size of the I2C buffer as determined by the hardware. (Default: 27 bytes)
+         */
         public int i2cMaxBuffer = 27; // Default to Modern Robotics Core DIM (lowest known).
 
-        /** Number of pixels present in the LED strip. (Default: 30) */
+        /**
+         * Number of pixels present in the LED strip. (Default: 30)
+         */
         public int length = 30;
 
-        /** Whether to log the actions of this device. (Default: no) */
+        /**
+         * Whether to log the actions of this device. (Default: no)
+         */
         public boolean loggingEnabled = false;
 
-        /** Label to use when logging the actions of this device. (Default: DotStarBridgedLED) */
+        /**
+         * Label to use when logging the actions of this device. (Default: DotStarBridgedLED)
+         */
         public String loggingTag = "DotStarBridgedLED";
 
-        /** Maximum output current (in amps) as determined by the hardware. (Default: 0.2 amps) */
+        /**
+         * Maximum output current (in amps) as determined by the hardware. (Default: 0.2 amps)
+         */
         public double maxOutputAmps = 0.2; // Default to Modern Robotics Core DIM (lowest known).
 
-        /** Bridge "register" (buffer prefix) to pass-through to the LEDs. (Default: 0x01) */
+        /**
+         * Bridge "register" (buffer prefix) to pass-through to the LEDs. (Default: 0x01)
+         */
         public int writeRegister = 0x01;
 
 
@@ -424,7 +435,8 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
         // Construction
         //------------------------------------------------------------------------------------------
 
-        public Parameters() {}
+        public Parameters() {
+        }
 
         public Parameters(Controller controller) {
             setController(controller);
@@ -433,9 +445,7 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
         public Parameters clone() {
             try {
                 return (Parameters) super.clone();
-            }
-            catch (CloneNotSupportedException e)
-            {
+            } catch (CloneNotSupportedException e) {
                 throw new RuntimeException("Internal error: DotStarBridgedLED.Parameters not cloneable");
             }
         }
@@ -470,16 +480,24 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
         // State
         //------------------------------------------------------------------------------------------
 
-        /** Value of the red channel, from 0 to 255. */
+        /**
+         * Value of the red channel, from 0 to 255.
+         */
         private int red;
 
-        /** Value of the blue channel, from 0 to 255. */
+        /**
+         * Value of the blue channel, from 0 to 255.
+         */
         private int blue;
 
-        /** Value of the green channel, from 0 to 255. */
+        /**
+         * Value of the green channel, from 0 to 255.
+         */
         private int green;
 
-        /** Estimate of maximum amps drawn per color. */
+        /**
+         * Estimate of maximum amps drawn per color.
+         */
         public static final double ampsDrawn = 0.02;
 
 
@@ -539,7 +557,6 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
          * Set the pixel's color values (android.graphics.Color).
          *
          * @param color Color value (android.graphics.Color)
-         *
          * @see android.graphics.Color
          */
         public void setColor(int color) {
@@ -550,6 +567,7 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
 
         /**
          * Copies a pixel to another.
+         *
          * @param c The pixel to copy.
          */
         public void copy(Pixel c) {
@@ -592,7 +610,7 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
          * Returns the given value, clipped to the range 0 - 255.
          *
          * @param value Color value to clip.
-         * @return      Color value clipped to the nearest value in the range 0 - 255.
+         * @return Color value clipped to the nearest value in the range 0 - 255.
          */
         private int bound(int value) {
             return Math.max(0, Math.min(255, value));
