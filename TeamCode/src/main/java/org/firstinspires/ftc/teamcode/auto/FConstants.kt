@@ -2,12 +2,11 @@ package org.firstinspires.ftc.teamcode.auto
 
 import com.pedropathing.follower.FollowerConstants
 import com.pedropathing.localization.Localizers
-import com.pedropathing.util.CustomFilteredPIDFCoefficients
-import com.pedropathing.util.CustomPIDFCoefficients
+import com.pedropathing.localization.constants.TwoWheelConstants
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 
 
-object FConstants {
+class FConstants {
     init {
         FollowerConstants.localizers = Localizers.TWO_WHEEL
 
@@ -16,61 +15,28 @@ object FConstants {
         FollowerConstants.rightFrontMotorName = "RF"
         FollowerConstants.rightRearMotorName = "RB"
 
-        FollowerConstants.leftFrontMotorDirection = DcMotorSimple.Direction.REVERSE
-        FollowerConstants.leftRearMotorDirection = DcMotorSimple.Direction.REVERSE
-        FollowerConstants.rightFrontMotorDirection = DcMotorSimple.Direction.FORWARD
-        FollowerConstants.rightRearMotorDirection = DcMotorSimple.Direction.FORWARD
+        FollowerConstants.leftFrontMotorDirection = DcMotorSimple.Direction.REVERSE // TODO: May need fixing
+        FollowerConstants.leftRearMotorDirection = DcMotorSimple.Direction.REVERSE // TODO: May need fixing
+        FollowerConstants.rightFrontMotorDirection = DcMotorSimple.Direction.FORWARD // TODO: May need fixing
+        FollowerConstants.rightRearMotorDirection = DcMotorSimple.Direction.FORWARD // TODO: May need fixing
 
-        FollowerConstants.mass = 0.0 // TODO: TUNE
+        FollowerConstants.mass = 12.7913
 
-        FollowerConstants.xMovement = 75.0
-        FollowerConstants.yMovement = 53.29521002371128
+        FollowerConstants.xMovement = 69.4109
+        FollowerConstants.yMovement = 44.58105
 
-        FollowerConstants.forwardZeroPowerAcceleration = -27.643286510947192
-        FollowerConstants.lateralZeroPowerAcceleration = -74.68689318834973
-
-        FollowerConstants.translationalPIDFCoefficients =
-            CustomPIDFCoefficients(0.15, 0.0, 0.02, 0.0)
+        FollowerConstants.forwardZeroPowerAcceleration = -29.2229
+        FollowerConstants.lateralZeroPowerAcceleration = -89.8578
 
         FollowerConstants.useSecondaryTranslationalPID = false
-        FollowerConstants.secondaryTranslationalPIDFCoefficients = CustomPIDFCoefficients(
-            0.1,
-            0.0,
-            0.01,
-            0.0
-        ) // Not being used, @see useSecondaryTranslationalPID
-
-        FollowerConstants.headingPIDFCoefficients = CustomPIDFCoefficients(1.8, 0.0, 0.1, 0.0)
-
         FollowerConstants.useSecondaryHeadingPID = false
-        FollowerConstants.secondaryHeadingPIDFCoefficients = CustomPIDFCoefficients(
-            2.0,
-            0.0,
-            0.1,
-            0.0
-        ) // Not being used, @see useSecondaryHeadingPID
-
-        FollowerConstants.drivePIDFCoefficients =
-            CustomFilteredPIDFCoefficients(0.024, 0.0, 0.0002, 0.6, 0.0)
-
         FollowerConstants.useSecondaryDrivePID = true
-        FollowerConstants.secondaryDrivePIDFCoefficients = CustomFilteredPIDFCoefficients(
-            0.1,
-            0.0,
-            0.0,
-            0.6,
-            0.0
-        ) // Not being used, @see useSecondaryDrivePID
 
-        FollowerConstants.zeroPowerAccelerationMultiplier = 4.4
-        FollowerConstants.centripetalScaling = 0.0015
+        FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.5,0.0,0.035,0.0)
+        FollowerConstants.headingPIDFCoefficients.setCoefficients(1.0,0.0,0.0,0.0)
+        FollowerConstants.drivePIDFCoefficients.setCoefficients(0.01,0.0,0.000025,0.6,0.0)
+        FollowerConstants.secondaryDrivePIDFCoefficients.setCoefficients(0.02,0.0,0.00001,0.6,0.0)
 
-        FollowerConstants.pathEndTimeoutConstraint = 100.0
-        FollowerConstants.pathEndTValueConstraint = 0.95
-        FollowerConstants.pathEndVelocityConstraint = 0.1
-        FollowerConstants.pathEndTranslationalConstraint = 0.1
-        FollowerConstants.pathEndHeadingConstraint = 0.007
 
-        FollowerConstants.useBrakeModeInTeleOp = true
     }
 }

@@ -1,39 +1,35 @@
 package org.firstinspires.ftc.teamcode.auto
 
-import com.pedropathing.follower.Follower
-import com.pedropathing.localization.Pose
-import com.pedropathing.localization.PoseUpdater
+import com.acmerobotics.dashboard.config.Config
 import com.pedropathing.pathgen.BezierCurve
 import com.pedropathing.pathgen.BezierLine
 import com.pedropathing.pathgen.PathBuilder
 import com.pedropathing.pathgen.PathChain
 import com.pedropathing.pathgen.Point
-import com.qualcomm.robotcore.hardware.HardwareMap
-import com.rowanmcalpin.nextftc.core.units.rad
-import com.rowanmcalpin.nextftc.ftc.OpModeData
 
-
+@Config
 object TrajectoryFactory {
 
     // region Poses
 
 
     // region Sample
+    @JvmField
+    var sampleStartPos = Point(9.0, 105.0, Point.CARTESIAN)
 
-    val sampleStartPos = Point(9.0, 105.0)
-
-    val sampleScorePose = Point(18.0, 126.0)
-
-    val firstSamplePos = Point(30.0, 121.0)
-
-    val secondSamplePos = Point(30.0, 131.5)
-
-    val thirdSamplePos = Point(32.348, 130.435)
-
-    val sampleParkPos = Point(61.148, 97.252)
+    @JvmField
+    var sampleScorePose = Point(18.0, 126.0)
+    @JvmField
+    var firstSamplePos = Point(30.0, 121.0)
+    @JvmField
+    var secondSamplePos = Point(30.0, 131.5)
+    @JvmField
+    var thirdSamplePos = Point(32.348, 130.435)
+    @JvmField
+    var sampleParkPos = Point(61.148, 97.252)
 
     // endregion
-
+    
     // endregion
 
     // region Paths
@@ -41,6 +37,17 @@ object TrajectoryFactory {
     var builder: PathBuilder = PathBuilder()
 
     // region Sample
+
+
+    var testPath: PathChain = builder
+        .addPath(
+            BezierCurve(
+                Point(0.0, 0.0, Point.CARTESIAN),
+                Point(4.0, 4.0, Point.CARTESIAN)
+            )
+        )
+        .setConstantHeadingInterpolation(Math.toRadians(0.0))
+        .build()
 
     var scorePreloadSample: PathChain = builder
         .addPath(

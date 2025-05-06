@@ -37,9 +37,7 @@ class TeleOp : NextFTCOpMode() {
         .useSubsystems(Claw, Intake, Arm, Extension, Pivot, IntakeSensor, Lift, Lights)
         .useGamepads()
         .useBulkReading()
-    
-    val fConstants: FConstants = FConstants
-    val lConstants: LConstants = LConstants
+
 
     private var poseUpdater: PoseUpdater? = null
     private var dashboardPoseTracker: DashboardPoseTracker? = null
@@ -55,6 +53,10 @@ class TeleOp : NextFTCOpMode() {
     lateinit var imu: IMU
 
     lateinit var driverControlled: MecanumDriverControlledFixed
+
+
+    private val fConstants = FConstants()
+    private val lConstants = LConstants()
 
 
     override fun onInit() {
@@ -157,7 +159,6 @@ class TeleOp : NextFTCOpMode() {
 
         GamepadManager.gamepad2.y.pressedCommand = { MechanismRoutines.specimenPickup }
         GamepadManager.gamepad2.leftTrigger.pressedCommand = { MechanismRoutines.specimenScore }
-
 
     }
 }

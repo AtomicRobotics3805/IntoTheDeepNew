@@ -86,4 +86,26 @@ object SampleRoutines {
                 )
             )
         )
+
+    val sampleAutoNoMechanisms: Command
+        get() = SequentialGroup(
+            FollowPath(TrajectoryFactory.scorePreloadSample),
+            Delay(0.5),
+            FollowPath(TrajectoryFactory.pickupFirstSample),
+            Delay(0.5),
+            FollowPath(TrajectoryFactory.scoreFirstSample),
+            Delay(0.5),
+            FollowPath(TrajectoryFactory.pickupSecondSample),
+            Delay(0.5),
+            FollowPath(TrajectoryFactory.scoreSecondSample),
+            Delay(0.5),
+            FollowPath(TrajectoryFactory.pickupThirdSample),
+            Delay(0.5),
+            FollowPath(TrajectoryFactory.scoreThirdSample),
+            Delay(0.5),
+            FollowPath(TrajectoryFactory.samplePark)
+        )
+
+    val testRoutine: Command
+        get() = FollowPath(TrajectoryFactory.testPath)
 }

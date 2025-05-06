@@ -34,7 +34,7 @@ object Extension : Subsystem() {
     var setPointTolerance = 30.0
 
     @JvmField
-    var coefficients = PIDCoefficients(0.003, 0.0, 0.0)
+    var coefficients = PIDCoefficients(0.005, 0.0, 0.0)
 
     @JvmField
     var ffParameters = GravityFeedforwardParameters(0.15)
@@ -51,7 +51,7 @@ object Extension : Subsystem() {
     // region Poses
 
     @JvmField
-    var transferPos = 150.0
+    var transferPos = 170.0
 
     @JvmField
     var autoTransferPos = 70.0
@@ -106,6 +106,6 @@ object Extension : Subsystem() {
 
     override fun initialize() {
         motor = MotorEx(motorName)
-        motor.direction = DcMotorSimple.Direction.REVERSE
+        motor.direction = DcMotorSimple.Direction.FORWARD
     }
 }

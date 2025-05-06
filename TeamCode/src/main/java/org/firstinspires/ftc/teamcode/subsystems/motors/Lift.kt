@@ -39,13 +39,13 @@ object Lift : Subsystem() {
     var setPointTolerance = 30.0
 
     @JvmField
-    var coefficients = PIDCoefficients(0.0028, 0.0, 0.00008)
+    var coefficients = PIDCoefficients(0.003, 0.0, 0.00008)
 
     @JvmField
     var ffParameters = GravityFeedforwardParameters(0.17)
 
     @JvmField
-    var interpParameters = FirstOrderEMAParameters(0.1)
+    var interpParameters = FirstOrderEMAParameters(0.2)
 
     val controller = ControlSystem().posPid(coefficients).elevatorFF(ffParameters)
         .emaInterpolator(interpParameters).build()
