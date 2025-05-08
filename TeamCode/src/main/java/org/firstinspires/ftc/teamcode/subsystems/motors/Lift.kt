@@ -36,7 +36,7 @@ object Lift : Subsystem() {
     // region PID
 
     @JvmField
-    var setPointTolerance = 30.0
+    var setPointTolerance = 40.0
 
     @JvmField
     var coefficients = PIDCoefficients(0.003, 0.0, 0.00008)
@@ -76,7 +76,7 @@ object Lift : Subsystem() {
     var specimenAutonomousScorePos = 277.0
 
     @JvmField
-    var hangPos = 2010.0
+    var hangPos = 2030.0
 
     // endregion
 

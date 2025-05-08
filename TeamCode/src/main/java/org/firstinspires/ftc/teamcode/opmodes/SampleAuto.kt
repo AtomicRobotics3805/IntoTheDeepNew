@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.pedropathing.follower.Follower
 import com.pedropathing.follower.FollowerConstants
+import com.pedropathing.localization.Pose
 import com.pedropathing.localization.PoseUpdater
 import com.pedropathing.localization.constants.TwoWheelConstants
 import com.pedropathing.util.Constants
@@ -19,6 +20,7 @@ import com.rowanmcalpin.nextftc.ftc.components.Components
 import com.rowanmcalpin.nextftc.ftc.components.NextComponent
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import com.rowanmcalpin.nextftc.pedro.PedroData
+import com.rowanmcalpin.nextftc.pedro.PedroData.follower
 import com.rowanmcalpin.nextftc.pedro.UpdateFollower
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.MecanumDriverControlledFixed
@@ -43,8 +45,6 @@ class SampleAuto : NextFTCOpMode() {
         .useBulkReading()
 
 
-    private var poseUpdater: PoseUpdater? = null
-    private var dashboardPoseTracker: DashboardPoseTracker? = null
 
 
     private lateinit var leftFront: MotorEx
@@ -64,12 +64,9 @@ class SampleAuto : NextFTCOpMode() {
 
     override fun onInit() {
         Constants.setConstants(FConstants::class.java, LConstants::class.java)
-        poseUpdater = PoseUpdater(hardwareMap)
-
         telemetry = MultipleTelemetry(FtcDashboard.getInstance().telemetry, telemetry)
         OpModeData.telemetry = telemetry
-
-        dashboardPoseTracker = DashboardPoseTracker(poseUpdater)
+        follower!!.setStartingPose(Pose(9.0, 105.0))
 
         leftFront = MotorEx(FollowerConstants.leftFrontMotorName)
         leftRear = MotorEx(FollowerConstants.leftRearMotorName)
@@ -101,6 +98,7 @@ class SampleAuto : NextFTCOpMode() {
         Extension.resetEncoders()
         Lift.resetEncoders()
 
+
         OpModeData.telemetry = telemetry
     }
 
@@ -118,6 +116,7 @@ class SampleAuto : NextFTCOpMode() {
         telemetry.addData("Extension Pos", Extension.motor.currentPosition)
         telemetry.addData("Extension Target", Extension.controller.reference.position)
 
+        follower!!.telemetryDebug(telemetry)
         telemetry.update()
     }
 

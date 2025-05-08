@@ -36,6 +36,10 @@ object Extension : Subsystem() {
     @JvmField
     var coefficients = PIDCoefficients(0.005, 0.0, 0.0)
 
+
+    @JvmField
+    var secondCoefficients = PIDCoefficients(0.01, 0.0, 0.0)
+
     @JvmField
     var ffParameters = GravityFeedforwardParameters(0.15)
 
@@ -43,8 +47,17 @@ object Extension : Subsystem() {
     @JvmField
     var interpParameters = FirstOrderEMAParameters(0.1)
 
+    @JvmField
+    var secondInterpParameters = FirstOrderEMAParameters(0.1)
+
+    @JvmField
+    var switch = KineticState(50.0)
+
     val controller = ControlSystem().posPid(coefficients).emaInterpolator(interpParameters)
         .elevatorFF(ffParameters).build()
+
+    val secondController = ControlSystem().posPid(secondCoefficients).emaInterpolator(secondInterpParameters).elevatorFF(
+        ffParameters).build()
 
     // endregion
 
@@ -78,25 +91,39 @@ object Extension : Subsystem() {
         get() = ResetEncoder(motor, this)
 
     val toTransfer: Command
-        get() = RunToPosition(controller, transferPos, setPointTolerance, this)
+        get() = dualControllerRunToPosition(controller, secondController, transferPos, switch, setPointTolerance,
+            setOf(this)
+        )
 
     val toOut: Command
-        get() = RunToPosition(controller, outPos, setPointTolerance, this)
+        get() = dualControllerRunToPosition(controller, secondController, outPos, switch, setPointTolerance,
+            setOf(this)
+        )
 
     val toSlightlyOut: Command
-        get() = RunToPosition(controller, slightlyOutPos, setPointTolerance, this)
+        get() = dualControllerRunToPosition(controller, secondController, slightlyOutPos, switch, setPointTolerance,
+            setOf(this)
+        )
 
     val toMiddlePos: Command
-        get() = RunToPosition(controller, middlePos, setPointTolerance, this)
+        get() = dualControllerRunToPosition(controller, secondController, middlePos, switch, setPointTolerance,
+            setOf(this)
+        )
 
     val toIntakeAuto: Command
-        get() = RunToPosition(controller, autoOutPos, setPointTolerance, this)
+        get() = dualControllerRunToPosition(controller, secondController, autoOutPos, switch, setPointTolerance,
+            setOf(this)
+        )
 
     val toAutoTransfer: Command
-        get() = RunToPosition(controller, autoTransferPos, setPointTolerance, this)
+        get() = dualControllerRunToPosition(controller, secondController, autoTransferPos, switch, setPointTolerance,
+            setOf(this)
+        )
 
     val toFullIn: Command
-        get() = RunToPosition(controller, 0.0, setPointTolerance, this)
+        get() = dualControllerRunToPosition(controller, secondController, 0.0, switch, setPointTolerance,
+            setOf(this)
+        )
 
     // endregion
 
@@ -107,5 +134,27 @@ object Extension : Subsystem() {
     override fun initialize() {
         motor = MotorEx(motorName)
         motor.direction = DcMotorSimple.Direction.FORWARD
+    }
+}
+
+class dualControllerRunToPosition @JvmOverloads constructor(
+    val system: ControlSystem,
+    val secondSystem: ControlSystem,
+    val goal: Double,
+    val switch: KineticState,
+    val tolerance: Double,
+    override val subsystems: Set<Subsystem> = emptySet()): Command() {
+
+    override val isDone: Boolean
+    get() = secondSystem.isWithinTolerance(KineticState(tolerance))
+
+    override fun start() {
+        system.goal = KineticState(goal)
+    }
+
+    override fun update() {
+        if (system.isWithinTolerance(switch)) {
+            secondSystem.goal = KineticState(goal)
+        }
     }
 }

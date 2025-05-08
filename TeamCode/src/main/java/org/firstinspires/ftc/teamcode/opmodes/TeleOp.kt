@@ -16,6 +16,7 @@ import com.rowanmcalpin.nextftc.ftc.OpModeData
 import com.rowanmcalpin.nextftc.ftc.components.Components
 import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
+import com.rowanmcalpin.nextftc.pedro.PedroData.follower
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.MecanumDriverControlledFixed
 import org.firstinspires.ftc.teamcode.auto.FConstants
@@ -39,8 +40,6 @@ class TeleOp : NextFTCOpMode() {
         .useBulkReading()
 
 
-    private var poseUpdater: PoseUpdater? = null
-    private var dashboardPoseTracker: DashboardPoseTracker? = null
 
 
     private lateinit var leftFront: MotorEx
@@ -61,12 +60,10 @@ class TeleOp : NextFTCOpMode() {
 
     override fun onInit() {
         Constants.setConstants(FConstants::class.java, LConstants::class.java)
-        poseUpdater = PoseUpdater(hardwareMap)
 
         telemetry = MultipleTelemetry(FtcDashboard.getInstance().telemetry, telemetry)
         OpModeData.telemetry = telemetry
 
-        dashboardPoseTracker = DashboardPoseTracker(poseUpdater)
 
         leftFront = MotorEx(FollowerConstants.leftFrontMotorName)
         leftRear = MotorEx(FollowerConstants.leftRearMotorName)
@@ -117,6 +114,7 @@ class TeleOp : NextFTCOpMode() {
         telemetry.addData("Lift current position", Lift.motorGroup.currentPosition)
         telemetry.addData("Extension Pos", Extension.motor.currentPosition)
         telemetry.addData("Extension Target", Extension.controller.reference.position)
+
 
         telemetry.update()
     }

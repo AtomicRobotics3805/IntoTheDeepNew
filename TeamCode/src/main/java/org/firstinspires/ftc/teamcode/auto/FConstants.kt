@@ -32,7 +32,7 @@ class FConstants {
         FollowerConstants.useSecondaryHeadingPID = false
         FollowerConstants.useSecondaryDrivePID = true
 
-        FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.5,0.0,0.035,0.0)
+        FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.2,0.0,0.035,0.0)
         FollowerConstants.headingPIDFCoefficients.setCoefficients(1.0,0.0,0.0,0.0)
         FollowerConstants.drivePIDFCoefficients.setCoefficients(0.01,0.0,0.000025,0.6,0.0)
         FollowerConstants.secondaryDrivePIDFCoefficients.setCoefficients(0.02,0.0,0.00001,0.6,0.0)

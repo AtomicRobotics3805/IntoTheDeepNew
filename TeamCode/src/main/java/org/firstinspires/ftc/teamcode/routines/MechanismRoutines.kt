@@ -57,6 +57,7 @@ object MechanismRoutines {
     val scoreSample: Command
         get() = SequentialGroup(
             Claw.close,
+            Pivot.toTransfer,
             ParallelGroup(
                 Intake.stop,
                 Extension.toSlightlyOut,

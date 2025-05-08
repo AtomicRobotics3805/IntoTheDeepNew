@@ -9,6 +9,83 @@ import org.firstinspires.ftc.teamcode.auto.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.subsystems.misc.IntakeSensor
 
 object SampleRoutines {
+    val sampleAutoSlow: Command
+        get() = SequentialGroup(
+            ParallelGroup(
+                MechanismRoutines.scoreSample,
+                FollowPath(TrajectoryFactory.scorePreloadSample)
+            ),
+            ParallelGroup(
+                SequentialGroup(
+                    MechanismRoutines.scoreAndReset,
+                    MechanismRoutines.outToIntake
+                ),
+                SequentialGroup(
+                    Delay(2.0),
+                    FollowPath(TrajectoryFactory.pickupFirstSample)
+                )
+            ),
+            IntakeSensor.WaitUntilSample(),
+            ParallelGroup(
+                SequentialGroup(
+                    MechanismRoutines.transfer,
+                    MechanismRoutines.scoreSample
+                ),
+                SequentialGroup(
+                    Delay(2.0),
+                    FollowPath(TrajectoryFactory.scoreFirstSample)
+                )
+            ),
+            ParallelGroup(
+                SequentialGroup(
+                    MechanismRoutines.scoreAndReset,
+                    MechanismRoutines.outToIntake
+                ),
+                SequentialGroup(
+                    Delay(2.0),
+                    FollowPath(TrajectoryFactory.pickupSecondSample)
+                )
+            ),
+            IntakeSensor.WaitUntilSample(),
+            ParallelGroup(
+                SequentialGroup(
+                    MechanismRoutines.transfer,
+                    MechanismRoutines.scoreSample
+                ),
+                SequentialGroup(
+                    Delay(2.0),
+                    FollowPath(TrajectoryFactory.scoreSecondSample)
+                )
+            ),
+            ParallelGroup(
+                SequentialGroup(
+                    MechanismRoutines.scoreAndReset,
+                    MechanismRoutines.outToIntake
+                ),
+                SequentialGroup(
+                    Delay(2.0),
+                    FollowPath(TrajectoryFactory.pickupThirdSample)
+                )
+            ),
+            IntakeSensor.WaitUntilSample(),
+            ParallelGroup(
+                SequentialGroup(
+                    MechanismRoutines.transfer,
+                    MechanismRoutines.scoreSample
+                ),
+                SequentialGroup(
+                    Delay(2.0),
+                    FollowPath(TrajectoryFactory.scoreThirdSample)
+                )
+            ),
+            ParallelGroup(
+                MechanismRoutines.autoPark,
+                SequentialGroup(
+                    Delay(2.0),
+                    FollowPath(TrajectoryFactory.samplePark)
+                )
+            )
+        )
     val sampleAuto: Command
         get() = SequentialGroup(
             ParallelGroup(
@@ -86,6 +163,8 @@ object SampleRoutines {
                 )
             )
         )
+
+
 
     val sampleAutoNoMechanisms: Command
         get() = SequentialGroup(
