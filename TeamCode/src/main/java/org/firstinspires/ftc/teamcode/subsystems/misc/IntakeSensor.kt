@@ -45,14 +45,14 @@ object IntakeSensor : Subsystem() {
         }
 
         override val isDone: Boolean
-            get() = (sensor.getDistance(DistanceUnit.CM) < distanceThreshold || timer.elapsedTimeSeconds > 3)
+            get() = (sensor.getDistance(DistanceUnit.CM) <= distanceThreshold || timer.elapsedTimeSeconds > 3)
     }
 
     class detect : Command() {
         override val isDone = false
 
         override fun update() {
-            if (sensor.getDistance(DistanceUnit.CM) < distanceThreshold) {
+            if (sensor.getDistance(DistanceUnit.CM) <= distanceThreshold) {
                 Color.colorToHSV(sensor.normalizedColors.toColor(), hsv)
                 detectedColor = if (hsv[0] <= 26)
                     OpModeData.Alliance.RED else if (hsv[0] <= 85)

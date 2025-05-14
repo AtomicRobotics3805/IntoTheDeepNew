@@ -23,7 +23,7 @@ object Claw : Subsystem() {
     // region Poses
 
     @JvmField
-    var openPos = 0.25
+    var openPos = 0.225
 
     @JvmField
     var closedPos = 0.35

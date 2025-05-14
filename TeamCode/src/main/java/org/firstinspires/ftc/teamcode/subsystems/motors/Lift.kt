@@ -12,6 +12,7 @@ import dev.nextftc.nextcontrol.KineticState
 import dev.nextftc.nextcontrol.feedback.PIDCoefficients
 import dev.nextftc.nextcontrol.feedforward.GravityFeedforwardParameters
 import dev.nextftc.nextcontrol.interpolators.FirstOrderEMAParameters
+import org.firstinspires.ftc.teamcode.subsystems.motors.Extension.transferPos
 
 @Config
 object Lift : Subsystem() {
@@ -36,10 +37,13 @@ object Lift : Subsystem() {
     // region PID
 
     @JvmField
-    var setPointTolerance = 40.0
+    var setPointTolerance = 50.0
 
     @JvmField
     var coefficients = PIDCoefficients(0.003, 0.0, 0.00008)
+
+    @JvmField
+    var secondCoefficients = PIDCoefficients(0.03, 0.0, 0.0)
 
     @JvmField
     var ffParameters = GravityFeedforwardParameters(0.17)
@@ -47,8 +51,17 @@ object Lift : Subsystem() {
     @JvmField
     var interpParameters = FirstOrderEMAParameters(0.2)
 
+
+    @JvmField
+    var secondInterpParameters = FirstOrderEMAParameters(0.2)
+
+    @JvmField
+    var switch = KineticState(100.0)
+
     val controller = ControlSystem().posPid(coefficients).elevatorFF(ffParameters)
         .emaInterpolator(interpParameters).build()
+
+    val secondController = ControlSystem().posPid(secondCoefficients).emaInterpolator(secondInterpParameters).elevatorFF(ffParameters).build()
 
     // endregion
 
@@ -88,34 +101,94 @@ object Lift : Subsystem() {
         get() = ResetEncoder(motorGroup.leader, this)
 
     val toIntake: Command
-        get() = RunToPosition(controller, intakePos, setPointTolerance, this)
+        get() = dualControllerRunToPosition(
+            controller,
+            secondController, intakePos,
+            switch,
+            setPointTolerance,
+            setOf(this)
+        )
 
     val toSpecimenPickup: Command
-        get() = RunToPosition(controller, specimenPickupPos, setPointTolerance, this)
+        get() = dualControllerRunToPosition(
+            controller,
+            secondController, specimenPickupPos,
+            switch,
+            setPointTolerance,
+            setOf(this)
+        )
 
     val toHigh: Command
-        get() = RunToPosition(controller, highPos, setPointTolerance, this)
+        get() = dualControllerRunToPosition(
+            controller,
+            secondController, highPos,
+            switch,
+            setPointTolerance,
+            setOf(this)
+        )
 
     val toSlightlyHigh: Command
-        get() = RunToPosition(controller, slightlyHighPos, setPointTolerance, this)
+        get() = dualControllerRunToPosition(
+            controller,
+            secondController, slightlyHighPos,
+            switch,
+            setPointTolerance,
+            setOf(this)
+        )
 
     val toSpecimenScore: Command
-        get() = RunToPosition(controller, specimenScorePos, setPointTolerance, this)
+        get() = dualControllerRunToPosition(
+            controller,
+            secondController, specimenScorePos,
+            switch,
+            setPointTolerance,
+            setOf(this)
+        )
 
     val toAutonomousSpecScore: Command
-        get() = RunToPosition(controller, specimenAutonomousScorePos, setPointTolerance, this)
+        get() = dualControllerRunToPosition(
+            controller,
+            secondController, specimenAutonomousScorePos,
+            switch,
+            setPointTolerance,
+            setOf(this)
+        )
 
     val toHang: Command
-        get() = RunToPosition(controller, hangPos, setPointTolerance, this)
+        get() = dualControllerRunToPosition(
+            controller,
+            secondController, hangPos,
+            switch,
+            setPointTolerance,
+            setOf(this)
+        )
 
     val toAutoTransferPos: Command
-        get() = RunToPosition(controller, autoTransferPos, setPointTolerance, this)
+        get() = dualControllerRunToPosition(
+            controller,
+            secondController, autoTransferPos,
+            switch,
+            setPointTolerance,
+            setOf(this)
+        )
 
     val zero: Command
-        get() = RunToPosition(controller, 0.0, setPointTolerance, this)
+        get() = dualControllerRunToPosition(
+            controller,
+            secondController, 0.0,
+            switch,
+            setPointTolerance,
+            setOf(this)
+        )
 
     val hang: Command
-        get() = RunToPosition(controller, slightlyHighPos, setPointTolerance, this)
+        get() = dualControllerRunToPosition(
+            controller,
+            secondController, slightlyHighPos,
+            switch,
+            setPointTolerance,
+            setOf(this)
+        )
 
     // endregion
 

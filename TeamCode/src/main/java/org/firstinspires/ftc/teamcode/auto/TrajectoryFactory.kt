@@ -39,11 +39,72 @@ object TrajectoryFactory {
     // region Sample
 
 
-    var testPath: PathChain = builder
+    var line1: PathChain = builder
         .addPath(
             BezierCurve(
-                Point(0.0, 0.0, Point.CARTESIAN),
-                Point(4.0, 4.0, Point.CARTESIAN)
+                Point(0.000, 0.000, Point.CARTESIAN),
+                Point(26.704, 46.919, Point.CARTESIAN),
+                Point(23.459, 10.482, Point.CARTESIAN)
+            )
+        )
+        .setConstantHeadingInterpolation(Math.toRadians(0.0))
+        .build()
+
+    var line2: PathChain = builder
+        .addPath(
+            BezierLine(
+                Point(23.459, 10.482, Point.CARTESIAN),
+                Point(10.981, 14.475, Point.CARTESIAN)
+            )
+        )
+        .setLinearHeadingInterpolation(Math.toRadians(0.0), Math.toRadians(56.0))
+        .build()
+
+    var line3: PathChain = builder
+        .addPath(
+            BezierLine(
+                Point(10.981, 14.475, Point.CARTESIAN),
+                Point(8.236, 23.958, Point.CARTESIAN)
+            )
+        )
+        .setLinearHeadingInterpolation(Math.toRadians(56.0), Math.toRadians(180.0))
+        .build()
+
+    var line4: PathChain = builder
+        .addPath(
+            BezierLine(
+                Point(8.236, 23.958, Point.CARTESIAN),
+                Point(11.730, 24.707, Point.CARTESIAN)
+            )
+        )
+        .setConstantHeadingInterpolation(Math.toRadians(180.0))
+        .build()
+
+    var line5: PathChain = builder
+        .addPath(
+            BezierLine(
+                Point(11.730, 24.707, Point.CARTESIAN),
+                Point(13.726, 18.218, Point.CARTESIAN)
+            )
+        )
+        .setConstantHeadingInterpolation(Math.toRadians(180.0))
+        .build()
+
+    var line6: PathChain = builder
+        .addPath(
+            BezierLine(
+                Point(13.726, 18.218, Point.CARTESIAN),
+                Point(8.236, 20.714, Point.CARTESIAN)
+            )
+        )
+        .setLinearHeadingInterpolation(Math.toRadians(180.0), Math.toRadians(0.0))
+        .build()
+
+    var line7: PathChain = builder
+        .addPath(
+            BezierLine(
+                Point(8.236, 20.714, Point.CARTESIAN),
+                Point(0.0, 0.0, Point.CARTESIAN)
             )
         )
         .setConstantHeadingInterpolation(Math.toRadians(0.0))

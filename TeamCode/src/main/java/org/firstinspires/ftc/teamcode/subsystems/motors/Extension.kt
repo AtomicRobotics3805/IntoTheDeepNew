@@ -31,18 +31,21 @@ object Extension : Subsystem() {
     // region PID
 
     @JvmField
-    var setPointTolerance = 30.0
+    var setPointTolerance = 35.0
 
     @JvmField
     var coefficients = PIDCoefficients(0.005, 0.0, 0.0)
 
 
     @JvmField
-    var secondCoefficients = PIDCoefficients(0.01, 0.0, 0.0)
+    var secondCoefficients = PIDCoefficients(0.02, 0.0, 0.0)
 
     @JvmField
     var ffParameters = GravityFeedforwardParameters(0.15)
 
+
+    @JvmField
+    var secondffParameters = GravityFeedforwardParameters(0.07)
 
     @JvmField
     var interpParameters = FirstOrderEMAParameters(0.1)
@@ -51,13 +54,13 @@ object Extension : Subsystem() {
     var secondInterpParameters = FirstOrderEMAParameters(0.1)
 
     @JvmField
-    var switch = KineticState(50.0)
+    var switch = KineticState(60.0)
 
     val controller = ControlSystem().posPid(coefficients).emaInterpolator(interpParameters)
         .elevatorFF(ffParameters).build()
 
     val secondController = ControlSystem().posPid(secondCoefficients).emaInterpolator(secondInterpParameters).elevatorFF(
-        ffParameters).build()
+        secondffParameters).build()
 
     // endregion
 

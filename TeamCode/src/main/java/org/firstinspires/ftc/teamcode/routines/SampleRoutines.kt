@@ -184,7 +184,4 @@ object SampleRoutines {
             Delay(0.5),
             FollowPath(TrajectoryFactory.samplePark)
         )
-
-    val testRoutine: Command
-        get() = FollowPath(TrajectoryFactory.testPath)
 }

@@ -122,3 +122,17 @@ class SampleAuto : NextFTCOpMode() {
 
 }
 
+class Pedro(val fConstants: Class<*>, val lConstants: Class<*>): NextComponent {
+    override fun preInit() {
+        if (OpModeData.hardwareMap == null) {
+            throw UninitializedPropertyAccessException("hardwareMap has not been initialized")
+        }
+        Constants.setConstants(fConstants, lConstants)
+        PedroData.follower = Follower(OpModeData.hardwareMap, fConstants, lConstants)
+
+    }
+
+    override fun preStartButtonPressed() {
+        CommandManager.scheduleCommand(UpdateFollower())
+    }
+}
