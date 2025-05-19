@@ -31,7 +31,7 @@ object Extension : Subsystem() {
     // region PID
 
     @JvmField
-    var setPointTolerance = 35.0
+    var setPointTolerance = 100.0
 
     @JvmField
     var coefficients = PIDCoefficients(0.005, 0.0, 0.0)
@@ -67,7 +67,7 @@ object Extension : Subsystem() {
     // region Poses
 
     @JvmField
-    var transferPos = 170.0
+    var transferPos = 0.0
 
     @JvmField
     var autoTransferPos = 70.0

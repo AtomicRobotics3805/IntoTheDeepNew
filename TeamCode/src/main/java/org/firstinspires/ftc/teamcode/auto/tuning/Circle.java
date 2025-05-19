@@ -37,6 +37,9 @@ public class Circle extends OpMode {
 
     private PathChain circle;
 
+    private FConstants f = new FConstants();
+    private LConstants l = new LConstants();
+
     /**
      * This initializes the Follower and creates the PathChain for the "circle". Additionally, this
      * initializes the FTC Dashboard telemetry.

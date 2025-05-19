@@ -37,7 +37,7 @@ object Lift : Subsystem() {
     // region PID
 
     @JvmField
-    var setPointTolerance = 50.0
+    var setPointTolerance = 100.0
 
     @JvmField
     var coefficients = PIDCoefficients(0.003, 0.0, 0.00008)
@@ -47,6 +47,10 @@ object Lift : Subsystem() {
 
     @JvmField
     var ffParameters = GravityFeedforwardParameters(0.17)
+
+
+    @JvmField
+    var secondffParameters = GravityFeedforwardParameters(0.07)
 
     @JvmField
     var interpParameters = FirstOrderEMAParameters(0.2)
@@ -61,7 +65,8 @@ object Lift : Subsystem() {
     val controller = ControlSystem().posPid(coefficients).elevatorFF(ffParameters)
         .emaInterpolator(interpParameters).build()
 
-    val secondController = ControlSystem().posPid(secondCoefficients).emaInterpolator(secondInterpParameters).elevatorFF(ffParameters).build()
+    val secondController = ControlSystem().posPid(secondCoefficients).emaInterpolator(secondInterpParameters).elevatorFF(
+        secondffParameters).build()
 
     // endregion
 

@@ -86,7 +86,7 @@ class TeleOp : NextFTCOpMode() {
         }
 
         IntakeSensor.detect()()
-        Lights.display()()
+        // Lights.display()()
 
         Arm.toDown()
         Pivot.toTransfer()
