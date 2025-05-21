@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.servos.Arm
 import org.firstinspires.ftc.teamcode.subsystems.servos.Claw
 import org.firstinspires.ftc.teamcode.subsystems.servos.Intake
 import org.firstinspires.ftc.teamcode.subsystems.servos.Pivot
+import org.java_websocket.framing.PingFrame
 
 object MechanismRoutines {
     val outToIntake: Command
@@ -24,7 +25,10 @@ object MechanismRoutines {
             Lift.toSlightlyHigh,
             ParallelGroup(
                 Extension.toOut,
-                Pivot.toIntake,
+                SequentialGroup(
+                    Delay(1.0),
+                    Pivot.toIntake
+                ),
                 Intake.intake
             ),
             Lift.toIntake
@@ -45,13 +49,26 @@ object MechanismRoutines {
         get() = SequentialGroup(
             ParallelGroup(
                 Pivot.toTransfer,
-                Intake.slowIntake,
+                Intake.stop,
                 Lift.toSlightlyHigh,
                 Extension.toTransfer,
                 Claw.open,
                 Arm.toDown
             ),
-            Lift.toIntake
+            Lift.toIntake,
+            Delay(1.0),
+            Claw.close
+        )
+
+    val jostle: Command
+        get() = SequentialGroup(
+            ParallelGroup(
+                Pivot.toTransfer,
+                Claw.open
+            ),
+            Extension.toSlightlyOut,
+            Extension.toTransfer,
+            Claw.close
         )
 
     val scoreSample: Command
@@ -62,6 +79,22 @@ object MechanismRoutines {
                 Intake.stop,
                 Extension.toSlightlyOut,
                 Lift.toHigh,
+                SequentialGroup(
+                    WaitUntil { Lift.motorGroup.currentPosition > 1000 },
+                    Extension.toTransfer,
+                    Arm.toUp
+                )
+            )
+        )
+
+    val scoreSampleLow: Command
+        get() = SequentialGroup(
+            Claw.close,
+            Pivot.toTransfer,
+            ParallelGroup(
+                Intake.stop,
+                Extension.toSlightlyOut,
+                Lift.toMiddle,
                 SequentialGroup(
                     WaitUntil { Lift.motorGroup.currentPosition > 1000 },
                     Extension.toTransfer,
@@ -137,7 +170,7 @@ object MechanismRoutines {
 
     val hang: Command
         get() = ParallelGroup(
-            Lift.hang,
+            Lift.zero,
             SequentialGroup(
                 WaitUntil { Lift.motorGroup.currentPosition < 500 },
                 Arm.toSpecimenPickup

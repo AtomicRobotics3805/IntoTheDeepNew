@@ -27,7 +27,7 @@ object Pivot : Subsystem() {
     var transferPos = 0.62
 
     @JvmField
-    var intakePos = 0.85
+    var intakePos = 0.9
 
     // endregion
 

@@ -17,6 +17,7 @@ import com.rowanmcalpin.nextftc.ftc.components.Components
 import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import com.rowanmcalpin.nextftc.pedro.PedroData.follower
+import dev.nextftc.nextcontrol.KineticState
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.MecanumDriverControlledFixed
 import org.firstinspires.ftc.teamcode.auto.FConstants
@@ -91,7 +92,10 @@ class TeleOp : NextFTCOpMode() {
         Arm.toDown()
         Pivot.toTransfer()
 
-
+        Lift.controller.goal = KineticState(0.0)
+        Lift.secondController.goal = KineticState(0.0)
+        Extension.controller.goal = KineticState(0.0)
+//        Extension.secondController.goal = KineticState(0.0)
         Extension.resetEncoders()
         Lift.resetEncoders()
 
@@ -120,43 +124,50 @@ class TeleOp : NextFTCOpMode() {
     }
 
     private fun registerControls() {
-        
-        GamepadManager.gamepad1.dpadLeft.pressedCommand = { Extension.toSlightlyOut }
-        // COMPETITION CONTROLS
-        GamepadManager.gamepad1.a.pressedCommand = { MechanismRoutines.outToIntake }
-        GamepadManager.gamepad1.leftBumper.pressedCommand = { MechanismRoutines.nearIntake }
-        GamepadManager.gamepad2.rightTrigger.pressedCommand = { MechanismRoutines.scoreAndReset }
-        GamepadManager.gamepad1.dpadRight.pressedCommand = { Intake.eject }
-        GamepadManager.gamepad1.dpadLeft.pressedCommand = { Intake.intake }
-        GamepadManager.gamepad1.rightBumper.pressedCommand = {
+
+
+        GamepadManager.gamepad2.rightBumper.pressedCommand = { Intake.eject }
+        GamepadManager.gamepad2.rightBumper.releasedCommand = { Intake.intake }
+
+        GamepadManager.gamepad1.leftTrigger.pressedCommand = {
             InstantCommand {
                 driverControlled.scalar = 0.5
             }
         }
-        GamepadManager.gamepad1.rightBumper.releasedCommand = {
+        GamepadManager.gamepad1.leftTrigger.releasedCommand = {
             InstantCommand {
                 driverControlled.scalar = 1.0
             }
         }
+
         GamepadManager.gamepad1.x.pressedCommand = {
             InstantCommand {
                 driverControlled.orientation = 0.0
             }
         }
-        GamepadManager.gamepad1.leftTrigger.pressedCommand = { MechanismRoutines.outToIntake }
-        GamepadManager.gamepad2.x.pressedCommand = { MechanismRoutines.scoreSample }
-        GamepadManager.gamepad2.b.pressedCommand = { MechanismRoutines.transfer }
-        GamepadManager.gamepad2.a.pressedCommand = { Claw.open }
 
-        GamepadManager.gamepad2.dpadDown.pressedCommand = { Lift.toIntake }
+        GamepadManager.gamepad1.rightBumper.pressedCommand = { MechanismRoutines.outToIntake }
+        GamepadManager.gamepad1.rightBumper.releasedCommand = { MechanismRoutines.transfer }
+
+        GamepadManager.gamepad1.leftBumper.pressedCommand = { MechanismRoutines.nearIntake }
+        GamepadManager.gamepad1.leftBumper.releasedCommand = { MechanismRoutines.transfer }
+
+        GamepadManager.gamepad1.rightTrigger.pressedCommand = { MechanismRoutines.scoreAndReset }
+
+        GamepadManager.gamepad2.a.pressedCommand = { Claw.open }
+        GamepadManager.gamepad2.b.pressedCommand = { MechanismRoutines.jostle }
+
 
         GamepadManager.gamepad1.dpadUp.pressedCommand = { MechanismRoutines.toHang }
         GamepadManager.gamepad1.dpadDown.pressedCommand = { MechanismRoutines.hang }
-        GamepadManager.gamepad1.b.pressedCommand = { Lift.zero }
+
         GamepadManager.gamepad1.y.pressedCommand = { MechanismRoutines.fullReset }
 
         GamepadManager.gamepad2.y.pressedCommand = { MechanismRoutines.specimenPickup }
         GamepadManager.gamepad2.leftTrigger.pressedCommand = { MechanismRoutines.specimenScore }
+
+        GamepadManager.gamepad2.dpadUp.pressedCommand = { MechanismRoutines.scoreSample }
+        GamepadManager.gamepad2.dpadRight.pressedCommand = { MechanismRoutines.scoreSampleLow }
 
     }
 }

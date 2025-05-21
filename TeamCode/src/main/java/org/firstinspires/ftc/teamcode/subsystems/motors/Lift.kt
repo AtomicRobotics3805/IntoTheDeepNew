@@ -43,14 +43,14 @@ object Lift : Subsystem() {
     var coefficients = PIDCoefficients(0.003, 0.0, 0.00008)
 
     @JvmField
-    var secondCoefficients = PIDCoefficients(0.03, 0.0, 0.0)
+    var secondCoefficients = PIDCoefficients(0.09, 0.0, 0.0)
 
     @JvmField
     var ffParameters = GravityFeedforwardParameters(0.17)
 
 
     @JvmField
-    var secondffParameters = GravityFeedforwardParameters(0.07)
+    var secondffParameters = GravityFeedforwardParameters(0.0)
 
     @JvmField
     var interpParameters = FirstOrderEMAParameters(0.2)
@@ -60,7 +60,7 @@ object Lift : Subsystem() {
     var secondInterpParameters = FirstOrderEMAParameters(0.2)
 
     @JvmField
-    var switch = KineticState(100.0)
+    var switch = KineticState(150.0)
 
     val controller = ControlSystem().posPid(coefficients).elevatorFF(ffParameters)
         .emaInterpolator(interpParameters).build()
@@ -94,6 +94,9 @@ object Lift : Subsystem() {
     var specimenAutonomousScorePos = 277.0
 
     @JvmField
+    var sampleLowPos = 1500.0
+
+    @JvmField
     var hangPos = 2030.0
 
     // endregion
@@ -118,6 +121,15 @@ object Lift : Subsystem() {
         get() = dualControllerRunToPosition(
             controller,
             secondController, specimenPickupPos,
+            switch,
+            setPointTolerance,
+            setOf(this)
+        )
+
+    val toMiddle: Command
+        get() = dualControllerRunToPosition(
+            controller,
+            secondController, sampleLowPos,
             switch,
             setPointTolerance,
             setOf(this)
@@ -181,15 +193,6 @@ object Lift : Subsystem() {
         get() = dualControllerRunToPosition(
             controller,
             secondController, 0.0,
-            switch,
-            setPointTolerance,
-            setOf(this)
-        )
-
-    val hang: Command
-        get() = dualControllerRunToPosition(
-            controller,
-            secondController, slightlyHighPos,
             switch,
             setPointTolerance,
             setOf(this)
